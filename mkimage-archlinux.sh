@@ -46,8 +46,10 @@ IFS=','
 PKGIGNORE="${PKGIGNORE[*]}"
 unset IFS
 
-arch="$(uname -m)"
-case "$arch" in
+ARCH="$(uname -m)"
+BUILD_ARCH=${BUILD_ARCH:-$ARCH}
+
+case "$BUILD_ARCH" in
 	armv*)
 		if pacman -Q archlinuxarm-keyring >/dev/null 2>&1; then
 			pacman-key --init
@@ -57,7 +59,7 @@ case "$arch" in
 			exit 1
 		fi
 		PACMAN_CONF=$(mktemp ${TMPDIR:-/var/tmp}/pacman-conf-archlinux-XXXXXXXXX)
-		version="$(echo $arch | cut -c 5)"
+		version="$(echo $BUILD_ARCH | cut -c 5)"
 		sed "s/Architecture = armv/Architecture = armv${version}h/g" './mkimage-alarm-pacman.conf' > "${PACMAN_CONF}"
 		PACMAN_MIRRORLIST='Server = http://mirror.archlinuxarm.org/$arch/$repo'
 		PACMAN_EXTRA_PKGS='archlinuxarm-keyring'
@@ -94,7 +96,6 @@ expect <<EOF
 	}
 EOF
 
-sleep 3
 arch-chroot $ROOTFS /bin/sh -c 'rm -r /usr/share/man/*'
 arch-chroot $ROOTFS /bin/sh -c "haveged -w 1024; pacman-key --init; pkill haveged; pacman -Rs --noconfirm haveged; pacman-key --populate $ARCH_KEYRING; pkill gpg-agent"
 arch-chroot $ROOTFS /bin/sh -c "ln -s /usr/share/zoneinfo/UTC /etc/localtime"
