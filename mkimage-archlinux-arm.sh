@@ -55,13 +55,12 @@ case "$arch" in
 			pacman-key --init
 			pacman-key --populate archlinuxarm
 		else
-			echo "Could not find archlinuxarm-keyring. 
-Please, install it and run pacman-key --populate archlinuxarm"
+			echo "Could not find archlinuxarm-keyring. Please, install it and run pacman-key --populate archlinuxarm"
 			exit 1
 		fi
 		PACMAN_CONF=$(mktemp ${TMPDIR:-/var/tmp}/pacman-conf-archlinux-XXXXXXXXX)
 		version="$(echo $arch | cut -c 5)"
-		sed "s/Architecture = armv/Architecture = armv${version}h/g" './mkimage-archarm-pacman.conf' > "${PACMAN_CONF}"
+		sed "s/Architecture = armv/Architecture = armv${version}h/g" './mkimage-alarm-pacman.conf' > "${PACMAN_CONF}"
 		PACMAN_MIRRORLIST='Server = http://mirror.archlinuxarm.org/$arch/$repo'
 		PACMAN_EXTRA_PKGS='archlinuxarm-keyring'
 		EXPECT_TIMEOUT=1800 # Most armv* based devices can be very slow (e.g. RPiv1)
