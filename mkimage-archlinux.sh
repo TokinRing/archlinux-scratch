@@ -46,8 +46,7 @@ IFS=','
 PKGIGNORE="${PKGIGNORE[*]}"
 unset IFS
 
-arch="x86_64"
-#arch="$(uname -m)"
+arch="$(uname -m)"
 case "$arch" in
 	armv*)
 		if pacman -Q archlinuxarm-keyring >/dev/null 2>&1; then
@@ -59,12 +58,12 @@ case "$arch" in
 		fi
 		PACMAN_CONF=$(mktemp ${TMPDIR:-/var/tmp}/pacman-conf-archlinux-XXXXXXXXX)
 		version="$(echo $arch | cut -c 5)"
-		sed "s/Architecture = armv/Architecture = armv${version}h/g" './mkimage-archarm-pacman.conf' > "${PACMAN_CONF}"
+		sed "s/Architecture = armv/Architecture = armv${version}h/g" './mkimage-alarm-pacman.conf' > "${PACMAN_CONF}"
 		PACMAN_MIRRORLIST='Server = http://mirror.archlinuxarm.org/$arch/$repo'
 		PACMAN_EXTRA_PKGS='archlinuxarm-keyring'
 		EXPECT_TIMEOUT=1800 # Most armv* based devices can be very slow (e.g. RPiv1)
 		ARCH_KEYRING=archlinuxarm
-		DOCKER_IMAGE_NAME="armv${version}h/archlinux"
+		DOCKER_IMAGE_NAME="tokinring/archlinux-armv${version}h"
 		;;
 	*)
 		PACMAN_CONF='./mkimage-archlinux-pacman.conf'
